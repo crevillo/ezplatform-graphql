@@ -85,7 +85,7 @@ class DomainContentResolver
         $query['sortBy'] = $args['sortBy'];
 
         $query = $this->queryMapper->mapInputToQuery($query);
-        $searchResults = $this->searchService->findContentInfo($query);
+        $searchResults = $this->repository->getSearchService()->findContentInfo($query);
         $items = array_map(
             function (SearchHit $searchHit) {
                 return $searchHit->valueObject;
