@@ -95,10 +95,6 @@ class SearchQueryMapper
             $query->filter = count($criteria) > 1 ? new Query\Criterion\LogicalAnd($criteria) : $criteria[0];
         }
 
-        if (isset($inputArray['sortBy'])) {
-            $query->sortClauses = [new $inputArray['sortBy']];
-        }
-
         return $query;
     }
 
