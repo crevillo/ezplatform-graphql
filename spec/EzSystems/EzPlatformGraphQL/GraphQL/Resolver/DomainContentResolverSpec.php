@@ -2,6 +2,7 @@
 
 namespace spec\EzSystems\EzPlatformGraphQL\GraphQL\Resolver;
 
+use eZ\Publish\Core\FieldType\RichText\Converter;
 use EzSystems\EzPlatformGraphQL\GraphQL\InputMapper\SearchQueryMapper;
 use EzSystems\EzPlatformGraphQL\GraphQL\Resolver\DomainContentResolver;
 use eZ\Publish\API\Repository\Repository;
@@ -13,9 +14,10 @@ class DomainContentResolverSpec extends ObjectBehavior
     function let(
         Repository $repository,
         TypeResolver $typeResolver,
-        SearchQueryMapper $searchQueryMapper
+        SearchQueryMapper $searchQueryMapper,
+        Converter $richTextConverter
     ) {
-        $this->beConstructedWith($repository, $typeResolver, $searchQueryMapper);
+        $this->beConstructedWith($repository, $typeResolver, $searchQueryMapper, $richTextConverter);
     }
 
     function it_is_initializable()
