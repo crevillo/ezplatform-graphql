@@ -49,7 +49,7 @@ class EzSystemsEzPlatformGraphQLExtension extends Extension implements PrependEx
             'platform' => [
                 'query' => 'Platform',
                 'mutation' => 'PlatformMutation',
-                'resolver_maps' => ['BD\EzPlatformGraphQLBundle\GraphQL\Resolver\Map\UploadMap'],
+                'resolver_maps' => ['EzSystems\EzPlatformGraphQL\GraphQL\Resolver\Map\UploadMap'],
             ]
         ];
 

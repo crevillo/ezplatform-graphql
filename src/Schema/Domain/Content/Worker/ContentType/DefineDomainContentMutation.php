@@ -1,32 +1,37 @@
 <?php
-namespace BD\EzPlatformGraphQLBundle\DomainContent\SchemaWorker\ContentType;
+namespace EzSystems\EzPlatformGraphQL\Schema\Domain\Content\Worker\ContentType;
 
 use eZ\Publish\API\Repository\Values\ContentType\ContentType;
-use EzSystems\EzPlatformGraphQL\Schema\Builder;
+use EzSystems\EzPlatformGraphQL\Schema;
+use EzSystems\EzPlatformGraphQL\Schema\Builder\Input;
 use EzSystems\EzPlatformGraphQL\Schema\Domain\Content\Worker\BaseWorker;
-use EzSystems\EzPlatformGraphQL\Schema\Worker;
-use spec\EzSystems\EzPlatformGraphQL\Tools\Stubs\InitializableWorker;
 
-class DefineDomainContentMutation extends BaseWorker implements Worker, InitializableWorker
+class DefineDomainContentMutation extends BaseWorker implements Schema\Worker, Schema\Initializer
 {
     const MUTATION_TYPE = 'DomainContentMutation';
 
-    public function init(Builder $schema)
+    public function init(Schema\Builder $schema)
     {
-        $schema->addType(new Builder\Input\Type(
+        $schema->addType(new Input\Type(
             self::MUTATION_TYPE,
             'object',
             ['inherits' => ['PlatformMutation']]
         ));
     }
 
-    public function work(Builder $schema, array $args)
+    public function work(Schema\Builder $schema, array $args)
     {
         $contentType = $args['ContentType'];
 
+        // ex: ArticleContentCreateInput
+        $schema->addType(new Input\Type($this->getCreateInputName($contentType), 'input-object'));
+
+        // ex: ArticleContentUpdateInput
+        $schema->addType(new Input\Type($this->getUpdateInputName($contentType), 'input-object'));
+
         // ex: createArticle
         $schema->addFieldToType(self::MUTATION_TYPE,
-            new Builder\Input\Field(
+            new Input\Field(
                 $this->getCreateField($contentType),
                 $this->getNameHelper()->domainContentName($contentType) . '!',
                 [
@@ -40,13 +45,7 @@ class DefineDomainContentMutation extends BaseWorker implements Worker, Initiali
         $schema->addArgToField(
             self::MUTATION_TYPE,
             $this->getCreateField($contentType),
-            new Builder\Input\Arg('input', $this->getCreateInputName($contentType) . '!')
-        );
-
-        $schema->addArgToField(
-            self::MUTATION_TYPE,
-            $this->getCreateField($contentType),
-            new Builder\Input\Arg('input', $this->getCreateInputName($contentType) . '!')
+            new Input\Arg('input', $this->getCreateInputName($contentType) . '!')
         );
 
         $schema->addArgToField(
@@ -58,15 +57,13 @@ class DefineDomainContentMutation extends BaseWorker implements Worker, Initiali
         $schema->addArgToField(
             self::MUTATION_TYPE,
             $this->getCreateField($contentType),
-            new Builder\Input\Arg('parentLocationId', 'Int!')
+            new Input\Arg('parentLocationId', 'Int!')
         );
-
-        $schema->addType(new Builder\Input\Type($this->getCreateInputName($contentType), 'input-object'));
 
         // Update mutation field
         $schema->addFieldToType(
             self::MUTATION_TYPE,
-            new Builder\Input\Field(
+            new Input\Field(
                 $this->getUpdateField($contentType),
                 $this->getNameHelper()->domainContentName($contentType) . '!',
                 ['resolve' => '@=mutation("UpdateDomainContent", [args["input"], args, args["versionNo"], args["language"]])']
@@ -76,7 +73,7 @@ class DefineDomainContentMutation extends BaseWorker implements Worker, Initiali
         $schema->addArgToField(
             self::MUTATION_TYPE,
             $this->getUpdateField($contentType),
-            new Builder\Input\Arg('input', $this->getUpdateInputName($contentType) . '!')
+            new Input\Arg('input', $this->getUpdateInputName($contentType) . '!')
         );
 
         $schema->addArgToField(
@@ -88,25 +85,23 @@ class DefineDomainContentMutation extends BaseWorker implements Worker, Initiali
         $schema->addArgToField(
             self::MUTATION_TYPE,
             $this->getUpdateField($contentType),
-            new Builder\Input\Arg('id', 'ID', ['description' => 'ID of the content item to update'])
+            new Input\Arg('id', 'ID', ['description' => 'ID of the content item to update'])
         );
 
         $schema->addArgToField(
             self::MUTATION_TYPE,
             $this->getUpdateField($contentType),
-            new Builder\Input\Arg('contentId', 'Int', ['description' => 'Repository content ID of the content item to update'])
+            new Input\Arg('contentId', 'Int', ['description' => 'Repository content ID of the content item to update'])
         );
 
         $schema->addArgToField(
             self::MUTATION_TYPE,
             $this->getUpdateField($contentType),
-            new Builder\Input\Arg('versionNo', 'Int', ['description' => 'Optional version number to update. If it is a draft, it is saved, not published. If it is archived, it is used as the source version for the update, to complete missing fields.'])
+            new Input\Arg('versionNo', 'Int', ['description' => 'Optional version number to update. If it is a draft, it is saved, not published. If it is archived, it is used as the source version for the update, to complete missing fields.'])
         );
-
-        $schema->addType(new Builder\Input\Type($this->getUpdateInputName($contentType), 'input-object'));
     }
 
-    public function canWork(Builder $schema, array $args)
+    public function canWork(Schema\Builder $schema, array $args)
     {
         return isset($args['ContentType'])
                && $args['ContentType'] instanceof ContentType
@@ -150,10 +145,10 @@ class DefineDomainContentMutation extends BaseWorker implements Worker, Initiali
     }
 
     /**
-     * @return Builder\Input\Arg
+     * @return Input\Arg
      */
-    private function buildLanguageFieldInput(): Builder\Input\Arg
+    private function buildLanguageFieldInput(): Input\Arg
     {
-        return new Builder\Input\Arg('language', 'String', ['defaultValue' => 'eng-GB']);
+        return new Input\Arg('language', 'String', ['defaultValue' => 'eng-GB']);
     }
 }

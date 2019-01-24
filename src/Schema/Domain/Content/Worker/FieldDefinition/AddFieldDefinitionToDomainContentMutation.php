@@ -1,5 +1,5 @@
 <?php
-namespace BD\EzPlatformGraphQLBundle\DomainContent\SchemaWorker\FieldDefinition;
+namespace EzSystems\EzPlatformGraphQL\Schema\Domain\Content\Worker\FieldDefinition;
 
 use eZ\Publish\API\Repository\Values\ContentType\ContentType;
 use eZ\Publish\API\Repository\Values\ContentType\FieldDefinition;
@@ -31,6 +31,7 @@ class AddFieldDefinitionToDomainContentMutation extends BaseWorker implements Wo
         $schema->addFieldToType(
             $this->getUpdateInputName($contentType),
             new Builder\Input\Field(
+                $fieldDefinitionField,
                 $this->getFieldDefinitionToGraphQLType($args['FieldDefinition'], self::OPERATION_UPDATE),
                 ['description' => $fieldDefinition->getDescriptions()['eng-GB'] ?? '']
             )

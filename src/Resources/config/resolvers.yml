@@ -53,7 +53,7 @@ services:
             $repository: "@ezpublish.siteaccessaware.repository"
             $richTextConverter: '@ezpublish.fieldType.ezrichtext.converter.input.xhtml5'
 
-    BD\EzPlatformGraphQLBundle\GraphQL\Mutation\UploadFiles:
+    EzSystems\EzPlatformGraphQL\GraphQL\Mutation\UploadFiles:
         arguments:
             $repository: '@ezpublish.siteaccessaware.repository'
         tags:
@@ -135,4 +135,4 @@ services:
         tags:
             - { name: overblog_graphql.resolver, alias: "SelectionFieldValue", method: "resolveSelectionFieldValue"}
 
-    BD\EzPlatformGraphQLBundle\GraphQL\Resolver\Map\UploadMap: ~
+    EzSystems\EzPlatformGraphQL\GraphQL\Resolver\Map\UploadMap: ~
