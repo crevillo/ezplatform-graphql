@@ -72,6 +72,9 @@ class SchemaBuilder implements SchemaBuilderInterface
         if (!empty($argInput->description)) {
             $arg['description'] = $argInput->description;
         }
+        if (!empty($argInput->defaultValue)) {
+            $arg['defaultValue'] = $argInput->defaultValue;
+        }
 
         $this->schema[$type]['config']['fields'][$field]['args'][$argInput->name] = $arg;
     }
